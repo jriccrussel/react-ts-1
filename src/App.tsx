@@ -1,7 +1,10 @@
 import React, { useContext, useEffect } from 'react'
+import { BrowserRouter } from 'react-router-dom'
 import './App.css'
+import { Category } from './components/category'
 import { AppContext } from './context/context'
 import { Home } from './pages/home'
+import { Pages } from './pages/pages'
 
 function App() {
   const context = useContext(AppContext)
@@ -15,7 +18,10 @@ function App() {
 
   return (
     <div className="App">
-      <Home />
+      <BrowserRouter>
+        <Category />
+        <Pages />
+      </BrowserRouter>
     </div>
   )
 }
