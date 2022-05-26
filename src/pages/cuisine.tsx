@@ -7,20 +7,50 @@ export const Cuisine = () => {
     const [cuisine, setCuisine] = useState([])
     let params = useParams()
 
-    const getCuisine = async (name:any) => {
+    useEffect(() => {
+        getCuisine(params.type)
+        // console.log(params.type)
+    }, [params.type])
+
+    const getCuisine = async (name?:any) => {
         const data = await fetch(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_API_KEY}&cuisine=${name}`)
         const recipes = await data.json()
         setCuisine(recipes.results)
-    }
-
-    useEffect(() => {
-        getCuisine(params.type)
-        console.log(params.type)
-    }, [params.type])
-    
+        console.log(recipes.results)
+    }    
 
     return (
-        <div>{params.type}</div>
+        <Grid>
+            {cuisine.map((item) => {
+                const { id, image, title } =item
+
+                return (
+                    <Card key={id}>
+                        <img src={image} alt={title} />
+                        <h4>{title}</h4>
+                    </Card>
+                )
+            })}
+        </Grid>
     )
 }
 
+const Grid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    grid-gap: 3rem;
+`
+
+const Card = styled.div`
+    img{
+        width: 100%;
+        border-radius: 2rem;
+    }
+    a{
+        text-decoration: none;
+    }
+    h4{
+        text-align: center;
+        padding: 1rem;
+    }
+`
