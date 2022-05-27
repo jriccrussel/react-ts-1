@@ -4,22 +4,55 @@ import styled from 'styled-components'
 
 export const Recipe = () => {
     const [details, setDetails] = useState({})
+    const [activeTab, setActiveTab] = useState("instructions")
     let params = useParams() 
-
-    useEffect(() => {
-        fetchDetails()
-        // console.log(params.type)
-    }, [params.name])
 
     const fetchDetails = async () => {
         const data = await fetch(`https://api.spoonacular.com/recipes/${params.name}/information?apiKey=${process.env.REACT_APP_API_KEY}`)
         const detailData = await data.json()
-        setDetails(detailData.results)
-        console.log(detailData.results)
+        setDetails(detailData)
+        console.log(detailData)
     }    
 
+    useEffect(() => {
+        fetchDetails()
+        console.log(details)
+    }, [params.name])
+
     return (
-        <div>recipe</div>
+        <DetailWrapper>
+            <div>
+                <h2>{details.title}</h2>
+                <img src={details.image} alt={details.title} />
+            </div>
+            <Info>
+                <Button
+                    className={activeTab === "instructions" ? "active" : ""}
+                    onClick={() => setActiveTab("instructions")}
+                >Instructions</Button>
+                <Button
+                    className={activeTab === "ingredients" ? "active" : ""}
+                    onClick={() => setActiveTab("ingredients")}
+                >Ingredients</Button>
+                {activeTab === "instructions" && (
+                    <div>
+                        <h3 dangerouslySetInnerHTML={{__html: details.summary}}></h3>
+                        <h3 dangerouslySetInnerHTML={{__html: details.instructions}}></h3>
+                    </div>
+                )}
+                {activeTab === "ingredients" && (
+                    <ul>
+                        {details.extendedIngredients.map((ingredient) => {
+                            return (
+                                <li key={ingredient.id}>
+                                    <p>{ingredient.original}</p>
+                                </li>
+                            )
+                        })}
+                    </ul>
+                )}
+            </Info>
+        </DetailWrapper>
     )
 }
 
